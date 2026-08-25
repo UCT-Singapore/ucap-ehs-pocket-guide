@@ -12,15 +12,39 @@
 const SITE = {
   name: "UCAP EHS Pocket Guide",
   companyShort: "UCAP",
-  emergencyPhone: "[PLACEHOLDER: Site Emergency Number]",
-  ehsPhone: "[PLACEHOLDER: EHS Department Number]",
-  securityPhone: "[PLACEHOLDER: Security Number]",
   reportingSystemName: "[PLACEHOLDER: Company Incident Reporting Platform Name]",
   reportingSystemUrl: "#", // [PLACEHOLDER: link to reporting system]
   sdsSystemUrl: "#",       // [PLACEHOLDER: link to SDS database]
   procedureSystemUrl: "#", // [PLACEHOLDER: link to controlled document system]
   lastUpdated: "2026-08-25"
 };
+
+/* ---------- EMERGENCY CONTACTS ----------
+   Grouped list shown on the Emergency Contacts screen.
+   Each group: { group, items: [{ label, phone, emoji }] }
+-------------------------------------- */
+const CONTACTS = [
+  {
+    group: "Emergency Services",
+    items: [
+      { label: "Ambulance & Fire", phone: "995", emoji: "🚑" },
+      { label: "Police", phone: "999", emoji: "🚓" },
+      { label: "Fire Command Centre", phone: "6250 9012", emoji: "🔥" }
+    ]
+  },
+  {
+    group: "Site Contacts",
+    items: [
+      { label: "Management — Vincent Lim", phone: "9623 8918", emoji: "👔" },
+      { label: "Management — TS Sum", phone: "8112 3798", emoji: "👔" },
+      { label: "SIC — Chiang Sun Chen", phone: "9852 8011", emoji: "🧑‍💼" },
+      { label: "SIC — Ee Jern Liang", phone: "8137 2836", emoji: "🧑‍💼" },
+      { label: "EHS — Toh Ee Meng", phone: "9678 5585", emoji: "🧑‍⚕️" },
+      { label: "Facility — Wu Wenjian", phone: "8822 1930", emoji: "🏭" },
+      { label: "IT — Robin Johan", phone: "9125 9883", emoji: "💻" }
+    ]
+  }
+];
 
 /* ---------- HOME CATEGORIES ---------- */
 const CATEGORIES = [

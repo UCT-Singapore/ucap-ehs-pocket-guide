@@ -560,15 +560,39 @@ a.plain { color: inherit; text-decoration: none; }
 const SITE = {
   name: "UCAP EHS Pocket Guide",
   companyShort: "UCAP",
-  emergencyPhone: "[PLACEHOLDER: Site Emergency Number]",
-  ehsPhone: "[PLACEHOLDER: EHS Department Number]",
-  securityPhone: "[PLACEHOLDER: Security Number]",
   reportingSystemName: "[PLACEHOLDER: Company Incident Reporting Platform Name]",
   reportingSystemUrl: "#", // [PLACEHOLDER: link to reporting system]
   sdsSystemUrl: "#",       // [PLACEHOLDER: link to SDS database]
   procedureSystemUrl: "#", // [PLACEHOLDER: link to controlled document system]
   lastUpdated: "2026-08-25"
 };
+
+/* ---------- EMERGENCY CONTACTS ----------
+   Grouped list shown on the Emergency Contacts screen.
+   Each group: { group, items: [{ label, phone, emoji }] }
+-------------------------------------- */
+const CONTACTS = [
+  {
+    group: "Emergency Services",
+    items: [
+      { label: "Ambulance & Fire", phone: "995", emoji: "🚑" },
+      { label: "Police", phone: "999", emoji: "🚓" },
+      { label: "Fire Command Centre", phone: "6250 9012", emoji: "🔥" }
+    ]
+  },
+  {
+    group: "Site Contacts",
+    items: [
+      { label: "Management — Vincent Lim", phone: "9623 8918", emoji: "👔" },
+      { label: "Management — TS Sum", phone: "8112 3798", emoji: "👔" },
+      { label: "SIC — Chiang Sun Chen", phone: "9852 8011", emoji: "🧑‍💼" },
+      { label: "SIC — Ee Jern Liang", phone: "8137 2836", emoji: "🧑‍💼" },
+      { label: "EHS — Toh Ee Meng", phone: "9678 5585", emoji: "🧑‍⚕️" },
+      { label: "Facility — Wu Wenjian", phone: "8822 1930", emoji: "🏭" },
+      { label: "IT — Robin Johan", phone: "9125 9883", emoji: "💻" }
+    ]
+  }
+];
 
 /* ---------- HOME CATEGORIES ---------- */
 const CATEGORIES = [
@@ -1337,26 +1361,21 @@ function viewIWantToDetail(id) {
 }
 
 function viewContacts() {
+  const groups = CONTACTS.map(g => `
+    <div class="section-label">${escapeHtml(g.group)}</div>
+    <div class="row-list">
+      ${g.items.map(c => `
+        <a class="row plain" href="tel:${c.phone.replace(/[^\d+]/g, '')}">
+          <span class="emoji">${c.emoji}</span>
+          <span class="text">${escapeHtml(c.label)}<small>${escapeHtml(c.phone)}</small></span>
+          <span class="chev">📞</span>
+        </a>`).join("")}
+    </div>`).join("");
+
   return `
     <div class="badge">Emergency</div>
     <h2 style="margin:0 0 14px;font-size:19px;">📞 Emergency Contacts</h2>
-    <div class="row-list">
-      <a class="row plain" href="tel:${SITE.emergencyPhone.replace(/[^\d+]/g,'')}">
-        <span class="emoji">🔴</span>
-        <span class="text">Site Emergency<small>${escapeHtml(SITE.emergencyPhone)}</small></span>
-        <span class="chev">📞</span>
-      </a>
-      <a class="row plain" href="tel:${SITE.ehsPhone.replace(/[^\d+]/g,'')}">
-        <span class="emoji">🧑‍⚕️</span>
-        <span class="text">EHS Department<small>${escapeHtml(SITE.ehsPhone)}</small></span>
-        <span class="chev">📞</span>
-      </a>
-      <a class="row plain" href="tel:${SITE.securityPhone.replace(/[^\d+]/g,'')}">
-        <span class="emoji">🛡️</span>
-        <span class="text">Security<small>${escapeHtml(SITE.securityPhone)}</small></span>
-        <span class="chev">📞</span>
-      </a>
-    </div>
+    ${groups}
     ${DISCLAIMER}
   `;
 }

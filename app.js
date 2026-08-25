@@ -170,26 +170,21 @@ function viewIWantToDetail(id) {
 }
 
 function viewContacts() {
+  const groups = CONTACTS.map(g => `
+    <div class="section-label">${escapeHtml(g.group)}</div>
+    <div class="row-list">
+      ${g.items.map(c => `
+        <a class="row plain" href="tel:${c.phone.replace(/[^\d+]/g, '')}">
+          <span class="emoji">${c.emoji}</span>
+          <span class="text">${escapeHtml(c.label)}<small>${escapeHtml(c.phone)}</small></span>
+          <span class="chev">📞</span>
+        </a>`).join("")}
+    </div>`).join("");
+
   return `
     <div class="badge">Emergency</div>
     <h2 style="margin:0 0 14px;font-size:19px;">📞 Emergency Contacts</h2>
-    <div class="row-list">
-      <a class="row plain" href="tel:${SITE.emergencyPhone.replace(/[^\d+]/g,'')}">
-        <span class="emoji">🔴</span>
-        <span class="text">Site Emergency<small>${escapeHtml(SITE.emergencyPhone)}</small></span>
-        <span class="chev">📞</span>
-      </a>
-      <a class="row plain" href="tel:${SITE.ehsPhone.replace(/[^\d+]/g,'')}">
-        <span class="emoji">🧑‍⚕️</span>
-        <span class="text">EHS Department<small>${escapeHtml(SITE.ehsPhone)}</small></span>
-        <span class="chev">📞</span>
-      </a>
-      <a class="row plain" href="tel:${SITE.securityPhone.replace(/[^\d+]/g,'')}">
-        <span class="emoji">🛡️</span>
-        <span class="text">Security<small>${escapeHtml(SITE.securityPhone)}</small></span>
-        <span class="chev">📞</span>
-      </a>
-    </div>
+    ${groups}
     ${DISCLAIMER}
   `;
 }
