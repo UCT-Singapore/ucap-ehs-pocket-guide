@@ -12,10 +12,10 @@
 const SITE = {
   name: "UCAP EHS Pocket Guide",
   companyShort: "UCAP",
-  reportingSystemName: "[PLACEHOLDER: Company Incident Reporting Platform Name]",
-  reportingSystemUrl: "#", // [PLACEHOLDER: link to reporting system]
-  sdsSystemUrl: "#",       // [PLACEHOLDER: link to SDS database]
-  procedureSystemUrl: "#", // [PLACEHOLDER: link to controlled document system]
+  reportingSystemName: "Incident Management System",
+  reportingSystemUrl: "https://apps.powerapps.com/play/e/default-64e853b0-8f4d-40ab-88be-0063a2c05bfb/a/6b2664d1-ff01-4118-b325-c2f49d3f8903?tenantId=64e853b0-8f4d-40ab-88be-0063a2c05bfb&hint=f0a06895-02ad-4ea8-b927-6539fbe21123&source=sharebutton&sourcetime=1787664433224",
+  sdsSystemUrl: "./sds/IPA_SDS.pdf", // Site uses only one chemical (Isopropyl Alcohol)
+  procedureSystemUrl: "https://apps.powerapps.com/play/e/default-64e853b0-8f4d-40ab-88be-0063a2c05bfb/a/feed388a-b019-4eb6-83fc-cb881cde347f?tenantId=64e853b0-8f4d-40ab-88be-0063a2c05bfb&source=sharebutton&sourcetime=1787664583349",
   lastUpdated: "2026-08-25"
 };
 
