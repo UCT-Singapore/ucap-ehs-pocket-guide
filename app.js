@@ -4,6 +4,85 @@
    ============================================================ */
 
 const $app = document.getElementById("app");
+const BRAND_LOGO_SRC = "./brand/uct-logo.png";
+
+/* ---------- Language ---------- */
+function getLang() {
+  return localStorage.getItem("ehs_lang") || "en";
+}
+function setLang(lang) {
+  localStorage.setItem("ehs_lang", lang);
+  render();
+}
+// Resolve a bilingual { en, zh } field to the current language's string.
+// Non-object fields (ids, urls, phone numbers) pass through unchanged.
+function t(field) {
+  if (field && typeof field === "object" && !Array.isArray(field) && "en" in field) {
+    return field[getLang()] || field.en;
+  }
+  return field;
+}
+
+const UI = {
+  heroTagline: { en: "Got a workplace safety situation? Find what to do in 20–30 seconds.", zh: "遇到工作场所安全问题？20-30秒内即可找到应对方法。" },
+  searchPlaceholderHome: { en: "Search a topic, e.g. 'spill', 'ladder'...", zh: "搜索主题，例如「泄漏」、「梯子」..." },
+  browseByTopic: { en: "Browse by Topic", zh: "按主题浏览" },
+  emergencyBannerTitle: { en: "Emergency", zh: "紧急情况" },
+  emergencyBannerSub: { en: "Fire, injury, spill — tap for immediate steps", zh: "火灾、受伤、泄漏——点击查看应急步骤" },
+  iWantToSection: { en: "I Want To...", zh: "我要..." },
+  checklistRowTitle: { en: "Get checklist before starting a task", zh: "开始任务前获取检查清单" },
+  checklistRowSub: { en: "New chemical, ladder, hot work, contractor and more", zh: "新化学品、梯子、动火作业、承包商等" },
+  disclaimerTitle: { en: "Quick Action Guide", zh: "快速行动指南" },
+  disclaimerBody: { en: "This guide provides quick workplace guidance and does not replace approved Risk Assessments, Work Instructions, SDSs or emergency procedures. When in doubt, contact EHS.", zh: "本指南提供快速的工作场所指引，不能替代经批准的风险评估、作业指导书、SDS或应急程序。如有疑问，请联系EHS。" },
+  noTopicsInCategory: { en: "No topics yet in this category.", zh: "该类别暂无主题。" },
+  needMoreInfo: { en: "Need More Information?", zh: "需要更多信息？" },
+  iWantToHeading: { en: "What are you about to do?", zh: "您准备做什么？" },
+  iWantToSub: { en: "Get the checklist to complete before you start.", zh: "获取开始前需完成的检查清单。" },
+  iWantToSearchPlaceholder: { en: "Search an action...", zh: "搜索操作..." },
+  noMatches: { en: "No matches. Try a different search term.", zh: "未找到匹配项。请尝试其他搜索词。" },
+  emergencyContactsHeading: { en: "📞 Emergency Contacts", zh: "📞 紧急联系方式" },
+  quickGuides: { en: "Quick Guides", zh: "快速指南" },
+  allTopicsHeading: { en: "🔍 All Topics", zh: "🔍 所有主题" },
+  pageNotFound: { en: "Page not found.", zh: "页面未找到。" },
+  backToHome: { en: "← Back to Home", zh: "← 返回首页" },
+  categoryFallback: { en: "Category", zh: "类别" },
+  guideFallback: { en: "Guide", zh: "指南" },
+  checklistFallback: { en: "Checklist", zh: "检查清单" },
+  emergencyContactsTitle: { en: "Emergency Contacts", zh: "紧急联系方式" },
+  azTitle: { en: "A–Z Quick Search", zh: "A–Z 快速搜索" },
+  navHome: { en: "Home", zh: "首页" },
+  navEmergency: { en: "Emergency", zh: "紧急" },
+  navIWantTo: { en: "I Want To", zh: "我要" },
+  navSearch: { en: "Search", zh: "搜索" },
+  installBannerText: { en: "📲 Add this guide to your home screen for one-tap access.", zh: "📲 将本指南添加到主屏幕，一键访问。" },
+  installBtn: { en: "Install", zh: "安装" },
+  searchPlaceholderGeneric: { en: "Search a topic...", zh: "搜索主题..." },
+  noResults: {
+    en: (q) => `No results for "${q}". Try a shorter word, or contact EHS directly.`,
+    zh: (q) => `未找到「${q}」的相关结果。请尝试更简短的关键词，或直接联系EHS。`
+  }
+};
+function tt(key) {
+  return UI[key][getLang()] || UI[key].en;
+}
+
+/* ---------- Theme ---------- */
+function getStoredTheme() {
+  return localStorage.getItem("ehs_theme"); // "light" | "dark" | null (follow system)
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme || "light");
+}
+function currentEffectiveTheme() {
+  return getStoredTheme() || "light";
+}
+function toggleTheme() {
+  const next = currentEffectiveTheme() === "dark" ? "light" : "dark";
+  localStorage.setItem("ehs_theme", next);
+  applyTheme(next);
+  render();
+}
+applyTheme(getStoredTheme());
 
 /* ---------- Helpers ---------- */
 function topicById(id) {
@@ -36,188 +115,204 @@ function renderLinks(links) {
     const href = linkAction(l.action);
     const external = l.action !== "contacts";
     return `<a class="link-btn plain" href="${href}" ${external ? 'target="_blank" rel="noopener"' : ""}>
-      <span class="emoji">${l.emoji}</span><span>${escapeHtml(l.label)}</span>
+      <span class="emoji">${l.emoji}</span><span>${escapeHtml(t(l.label))}</span>
     </a>`;
   }).join("")}</div>`;
 }
 
-const DISCLAIMER = `<div class="disclaimer">
-  <strong>Quick Action Guide</strong>
-  This guide provides quick workplace guidance and does not replace approved Risk Assessments, Work Instructions, SDSs or emergency procedures. When in doubt, contact EHS.
-</div>`;
+function disclaimer() {
+  return `<div class="disclaimer">
+    <strong>${escapeHtml(tt("disclaimerTitle"))}</strong>
+    ${escapeHtml(tt("disclaimerBody"))}
+  </div>`;
+}
 
 /* ---------- Views ---------- */
 function viewHome() {
   const categoryTiles = CATEGORIES.map(c => `
     <div class="tile" data-nav="#/category/${c.id}">
       <span class="emoji">${c.emoji}</span>
-      <span class="label">${escapeHtml(c.label)}</span>
+      <span class="label">${escapeHtml(t(c.label))}</span>
     </div>`).join("");
 
+  const lang = getLang();
+  const theme = currentEffectiveTheme();
+
   return `
+    <div class="brand-strip">
+      <img src="${BRAND_LOGO_SRC}" alt="UCT" class="brand-logo">
+      <div class="brand-strip-toggles">
+        <div class="lang-toggle" id="langToggle">
+          <button data-lang="en" class="${lang === "en" ? "active" : ""}">EN</button>
+          <button data-lang="zh" class="${lang === "zh" ? "active" : ""}">中</button>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">${theme === "dark" ? "☀️" : "🌙"}</button>
+      </div>
+    </div>
+
     <div class="hero">
       <div class="eyebrow">${escapeHtml(SITE.companyShort)} EHS</div>
-      <h1>Pocket Guide</h1>
-      <p>Got a workplace safety situation? Find what to do in 20–30 seconds.</p>
+      <h1>${escapeHtml(t(SITE.tagline))}</h1>
+      <p>${escapeHtml(tt("heroTagline"))}</p>
     </div>
 
     <div class="search-wrap">
       <span class="icon">🔍</span>
-      <input id="searchInput" type="search" placeholder="Search a topic, e.g. 'spill', 'ladder'..." autocomplete="off">
+      <input id="searchInput" type="search" placeholder="${escapeHtml(tt("searchPlaceholderHome"))}" autocomplete="off">
     </div>
     <div id="searchResults"></div>
 
     <div id="homeSections">
       <div class="emergency-banner" data-nav="#/category/emergency">
         <span class="emoji">🔴</span>
-        <span>Emergency<span class="sub">Fire, injury, spill — tap for immediate steps</span></span>
+        <span>${escapeHtml(tt("emergencyBannerTitle"))}<span class="sub">${escapeHtml(tt("emergencyBannerSub"))}</span></span>
       </div>
 
-      <div class="section-label">Browse by Topic</div>
+      <div class="section-label">${escapeHtml(tt("browseByTopic"))}</div>
       <div class="tile-grid">${categoryTiles}</div>
 
-      <div class="section-label">I Want To...</div>
-      <div class="row">
+      <div class="section-label">${escapeHtml(tt("iWantToSection"))}</div>
+      <div class="row" data-nav="#/iwantto">
         <span class="emoji">💡</span>
-        <span class="text">Get checklist before starting a task<small>New chemical, ladder, hot work, contractor and more</small></span>
+        <span class="text">${escapeHtml(tt("checklistRowTitle"))}<small>${escapeHtml(tt("checklistRowSub"))}</small></span>
         <span class="chev">›</span>
       </div>
     </div>
-    ${DISCLAIMER}
+    ${disclaimer()}
   `;
 }
 
 function viewCategory(catId) {
   const cat = catById(catId);
   if (!cat) return viewNotFound();
-  const topics = TOPICS.filter(t => t.category === catId);
-  const rows = topics.map(t => `
-    <div class="row" data-nav="#/topic/${t.id}">
-      <span class="emoji">${t.emoji}</span>
-      <span class="text">${escapeHtml(t.title)}</span>
+  const topics = TOPICS.filter(topic => topic.category === catId);
+  const rows = topics.map(topic => `
+    <div class="row" data-nav="#/topic/${topic.id}">
+      <span class="emoji">${topic.emoji}</span>
+      <span class="text">${escapeHtml(t(topic.title))}</span>
       <span class="chev">›</span>
     </div>`).join("");
 
   return `
-    <div class="badge">${escapeHtml(cat.label)}</div>
-    <h2 style="margin:0 0 12px;font-size:19px;">${cat.emoji} ${escapeHtml(cat.label)}</h2>
-    <div class="row-list">${rows || `<div class="empty-state">No topics yet in this category.</div>`}</div>
-    ${DISCLAIMER}
+    <div class="badge">${escapeHtml(t(cat.label))}</div>
+    <h2 style="margin:0 0 12px;font-size:19px;">${cat.emoji} ${escapeHtml(t(cat.label))}</h2>
+    <div class="row-list">${rows || `<div class="empty-state">${escapeHtml(tt("noTopicsInCategory"))}</div>`}</div>
+    ${disclaimer()}
   `;
 }
 
 function viewTopic(id) {
-  const t = topicById(id);
-  if (!t) return viewNotFound();
-  const steps = t.steps.map((s, i) => `
+  const topic = topicById(id);
+  if (!topic) return viewNotFound();
+  const steps = topic.steps.map((s, i) => `
     <div class="step-card">
       <div class="step-num">${i + 1}</div>
-      <div class="step-body"><strong>${escapeHtml(s.title)}</strong><p>${escapeHtml(s.text)}</p></div>
+      <div class="step-body"><strong>${escapeHtml(t(s.title))}</strong><p>${escapeHtml(t(s.text))}</p></div>
     </div>`).join("");
 
   return `
-    <div class="badge">${escapeHtml(t.badge)}</div>
-    <div class="topic-header"><span class="emoji">${t.emoji}</span><h2>${escapeHtml(t.title)}</h2></div>
+    <div class="badge">${escapeHtml(t(topic.badge))}</div>
+    <div class="topic-header"><span class="emoji">${topic.emoji}</span><h2>${escapeHtml(t(topic.title))}</h2></div>
     <div style="margin:14px 0 10px;">
       ${steps}
     </div>
-    ${t.danger ? `<div class="danger-box"><strong>⚠️ Important</strong>${escapeHtml(t.danger)}</div>` : ""}
-    <div class="section-label">Need More Information?</div>
-    ${renderLinks(t.links)}
-    ${DISCLAIMER}
+    ${topic.danger ? `<div class="danger-box"><strong>⚠️ ${getLang() === "zh" ? "重要" : "Important"}</strong>${escapeHtml(t(topic.danger))}</div>` : ""}
+    <div class="section-label">${escapeHtml(tt("needMoreInfo"))}</div>
+    ${renderLinks(topic.links)}
+    ${disclaimer()}
   `;
 }
 
 function viewIWantToList(query) {
   const q = (query || "").trim().toLowerCase();
-  const items = I_WANT_TO.filter(i => !q || i.label.toLowerCase().includes(q));
+  const items = I_WANT_TO.filter(i => !q || t(i.label).toLowerCase().includes(q));
   const rows = items.map(i => `
     <div class="row" data-nav="#/iwantto/${i.id}">
       <span class="emoji">${i.emoji}</span>
-      <span class="text">${escapeHtml(i.label)}</span>
+      <span class="text">${escapeHtml(t(i.label))}</span>
       <span class="chev">›</span>
     </div>`).join("");
 
   return `
-    <div class="badge">I Want To...</div>
-    <h2 style="margin:0 0 4px;font-size:19px;">💡 What are you about to do?</h2>
-    <p style="margin:0 0 14px;color:var(--ink-soft);font-size:13.5px;">Get the checklist to complete before you start.</p>
+    <div class="badge">${escapeHtml(tt("iWantToSection"))}</div>
+    <h2 style="margin:0 0 4px;font-size:19px;">💡 ${escapeHtml(tt("iWantToHeading"))}</h2>
+    <p style="margin:0 0 14px;color:var(--ink-soft);font-size:13.5px;">${escapeHtml(tt("iWantToSub"))}</p>
     <div class="search-wrap">
       <span class="icon">🔍</span>
-      <input id="iWantToSearch" type="search" placeholder="Search an action..." autocomplete="off" value="${escapeHtml(query || "")}">
+      <input id="iWantToSearch" type="search" placeholder="${escapeHtml(tt("iWantToSearchPlaceholder"))}" autocomplete="off" value="${escapeHtml(query || "")}">
     </div>
-    <div class="row-list">${rows || `<div class="empty-state">No matches. Try a different search term.</div>`}</div>
-    ${DISCLAIMER}
+    <div class="row-list">${rows || `<div class="empty-state">${escapeHtml(tt("noMatches"))}</div>`}</div>
+    ${disclaimer()}
   `;
 }
 
 function viewIWantToDetail(id) {
   const item = iWantToById(id);
   if (!item) return viewNotFound();
-  const checklist = item.checklist.map(c => `<li>${escapeHtml(c)}</li>`).join("");
+  const checklist = item.checklist.map(c => `<li>${escapeHtml(t(c))}</li>`).join("");
 
   return `
-    <div class="badge">I Want To...</div>
-    <div class="topic-header"><span class="emoji">${item.emoji}</span><h2>${escapeHtml(item.label)}</h2></div>
-    <p style="margin:8px 0 12px;font-size:14px;color:var(--ink-soft);">${escapeHtml(item.intro)}</p>
+    <div class="badge">${escapeHtml(tt("iWantToSection"))}</div>
+    <div class="topic-header"><span class="emoji">${item.emoji}</span><h2>${escapeHtml(t(item.label))}</h2></div>
+    <p style="margin:8px 0 12px;font-size:14px;color:var(--ink-soft);">${escapeHtml(t(item.intro))}</p>
     <ul class="checklist">${checklist}</ul>
-    ${item.note ? `<div class="note-box"><strong>Note:</strong> ${escapeHtml(item.note)}</div>` : ""}
-    ${item.danger ? `<div class="danger-box"><strong>⚠️ Important</strong>${escapeHtml(item.danger)}</div>` : ""}
-    <div class="section-label">Need More Information?</div>
+    ${item.note ? `<div class="note-box"><strong>${getLang() === "zh" ? "注意：" : "Note:"}</strong> ${escapeHtml(t(item.note))}</div>` : ""}
+    ${item.danger ? `<div class="danger-box"><strong>⚠️ ${getLang() === "zh" ? "重要" : "Important"}</strong>${escapeHtml(t(item.danger))}</div>` : ""}
+    <div class="section-label">${escapeHtml(tt("needMoreInfo"))}</div>
     ${renderLinks(item.links)}
-    ${DISCLAIMER}
+    ${disclaimer()}
   `;
 }
 
 function viewContacts() {
   const groups = CONTACTS.map(g => `
-    <div class="section-label">${escapeHtml(g.group)}</div>
+    <div class="section-label">${escapeHtml(t(g.group))}</div>
     <div class="row-list">
       ${g.items.map(c => `
         <a class="row plain" href="tel:${c.phone.replace(/[^\d+]/g, '')}">
           <span class="emoji">${c.emoji}</span>
-          <span class="text">${escapeHtml(c.label)}<small>${escapeHtml(c.phone)}</small></span>
+          <span class="text">${escapeHtml(t(c.label))}<small>${escapeHtml(c.phone)}</small></span>
           <span class="chev">📞</span>
         </a>`).join("")}
     </div>`).join("");
 
   return `
-    <div class="badge">Emergency</div>
-    <h2 style="margin:0 0 14px;font-size:19px;">📞 Emergency Contacts</h2>
+    <div class="badge">${escapeHtml(tt("emergencyBannerTitle"))}</div>
+    <h2 style="margin:0 0 14px;font-size:19px;">${escapeHtml(tt("emergencyContactsHeading"))}</h2>
     ${groups}
-    ${DISCLAIMER}
+    ${disclaimer()}
   `;
 }
 
 function viewSearch(query) {
   const q = (query || "").trim().toLowerCase();
   if (!q) return "";
-  const topicMatches = TOPICS.filter(t =>
-    t.title.toLowerCase().includes(q) || t.badge.toLowerCase().includes(q)
+  const topicMatches = TOPICS.filter(topic =>
+    t(topic.title).toLowerCase().includes(q) || t(topic.badge).toLowerCase().includes(q)
   );
-  const iwtMatches = I_WANT_TO.filter(i => i.label.toLowerCase().includes(q));
+  const iwtMatches = I_WANT_TO.filter(i => t(i.label).toLowerCase().includes(q));
 
   if (!topicMatches.length && !iwtMatches.length) {
-    return `<div class="empty-state">No results for "${escapeHtml(query)}". Try a shorter word, or contact EHS directly.</div>`;
+    return `<div class="empty-state">${escapeHtml(tt("noResults")(query))}</div>`;
   }
 
   let html = "";
   if (topicMatches.length) {
-    html += `<div class="section-label">Quick Guides</div><div class="row-list">`;
-    html += topicMatches.map(t => `
-      <div class="row" data-nav="#/topic/${t.id}">
-        <span class="emoji">${t.emoji}</span>
-        <span class="text">${escapeHtml(t.title)}<small>${escapeHtml(t.badge)}</small></span>
+    html += `<div class="section-label">${escapeHtml(tt("quickGuides"))}</div><div class="row-list">`;
+    html += topicMatches.map(topic => `
+      <div class="row" data-nav="#/topic/${topic.id}">
+        <span class="emoji">${topic.emoji}</span>
+        <span class="text">${escapeHtml(t(topic.title))}<small>${escapeHtml(t(topic.badge))}</small></span>
         <span class="chev">›</span>
       </div>`).join("");
     html += `</div>`;
   }
   if (iwtMatches.length) {
-    html += `<div class="section-label">I Want To...</div><div class="row-list">`;
+    html += `<div class="section-label">${escapeHtml(tt("iWantToSection"))}</div><div class="row-list">`;
     html += iwtMatches.map(i => `
       <div class="row" data-nav="#/iwantto/${i.id}">
         <span class="emoji">${i.emoji}</span>
-        <span class="text">${escapeHtml(i.label)}</span>
+        <span class="text">${escapeHtml(t(i.label))}</span>
         <span class="chev">›</span>
       </div>`).join("");
     html += `</div>`;
@@ -226,41 +321,41 @@ function viewSearch(query) {
 }
 
 function viewAZ() {
-  const all = [...TOPICS.map(t => ({ id: t.id, label: t.title, emoji: t.emoji, type: "topic" }))]
-    .sort((a, b) => a.label.localeCompare(b.label));
-  const rows = all.map(t => `
-    <div class="row" data-nav="#/topic/${t.id}">
-      <span class="emoji">${t.emoji}</span>
-      <span class="text">${escapeHtml(t.label)}</span>
+  const all = TOPICS.map(topic => ({ id: topic.id, label: t(topic.title), emoji: topic.emoji }))
+    .sort((a, b) => a.label.localeCompare(b.label, getLang() === "zh" ? "zh-Hans" : "en"));
+  const rows = all.map(topic => `
+    <div class="row" data-nav="#/topic/${topic.id}">
+      <span class="emoji">${topic.emoji}</span>
+      <span class="text">${escapeHtml(topic.label)}</span>
       <span class="chev">›</span>
     </div>`).join("");
   return `
     <div class="badge">A–Z</div>
-    <h2 style="margin:0 0 12px;font-size:19px;">🔍 All Topics</h2>
+    <h2 style="margin:0 0 12px;font-size:19px;">${escapeHtml(tt("allTopicsHeading"))}</h2>
     <div class="row-list">${rows}</div>
-    ${DISCLAIMER}
+    ${disclaimer()}
   `;
 }
 
 function viewNotFound() {
-  return `<div class="empty-state">Page not found.<br><br><a class="plain" href="#/" style="color:var(--blue);font-weight:600;">← Back to Home</a></div>`;
+  return `<div class="empty-state">${escapeHtml(tt("pageNotFound"))}<br><br><a class="plain" href="#/" style="color:var(--blue);font-weight:600;">${escapeHtml(tt("backToHome"))}</a></div>`;
 }
 
 /* ---------- Top bar config per route ---------- */
 function topbarFor(route) {
   if (route.name === "home") {
-    return { title: SITE.name, sub: SITE.companyShort, showBack: false };
+    return { title: t(SITE.name), sub: SITE.companyShort, showBack: false };
   }
   const titles = {
-    category: () => catById(route.params[0])?.label || "Category",
-    topic: () => topicById(route.params[0])?.title || "Guide",
-    iwantto_list: () => "I Want To...",
-    iwantto_detail: () => iWantToById(route.params[0])?.label || "Checklist",
-    contacts: () => "Emergency Contacts",
-    az: () => "A–Z Quick Search"
+    category: () => t(catById(route.params[0])?.label) || tt("categoryFallback"),
+    topic: () => t(topicById(route.params[0])?.title) || tt("guideFallback"),
+    iwantto_list: () => tt("iWantToSection"),
+    iwantto_detail: () => t(iWantToById(route.params[0])?.label) || tt("checklistFallback"),
+    contacts: () => tt("emergencyContactsTitle"),
+    az: () => tt("azTitle")
   };
   const fn = titles[route.name];
-  return { title: fn ? fn() : SITE.name, sub: null, showBack: true };
+  return { title: fn ? fn() : t(SITE.name), sub: null, showBack: true };
 }
 
 /* ---------- Router ---------- */
@@ -279,6 +374,7 @@ function parseRoute() {
 }
 
 function render() {
+  document.documentElement.lang = getLang() === "zh" ? "zh-Hans" : "en";
   const route = parseRoute();
   let bodyHtml = "";
 
@@ -290,7 +386,7 @@ function render() {
     case "iwantto_detail": bodyHtml = viewIWantToDetail(route.params[0]); break;
     case "contacts": bodyHtml = viewContacts(); break;
     case "az": bodyHtml = viewAZ(); break;
-    case "search": bodyHtml = viewIWantToList ? viewSearchPage(route.params[0]) : ""; break;
+    case "search": bodyHtml = viewSearchPage(route.params[0]); break;
     default: bodyHtml = viewNotFound();
   }
 
@@ -302,22 +398,23 @@ function render() {
       ${tb.showBack ? `<button class="home-btn" data-nav="#/">⌂</button>` : `<span style="width:36px;"></span>`}
     </div>
     <div class="install-banner" id="installBanner">
-      <span>📲 Add this guide to your home screen for one-tap access.</span>
-      <button id="installBtn">Install</button>
+      <span>${escapeHtml(tt("installBannerText"))}</span>
+      <button id="installBtn">${escapeHtml(tt("installBtn"))}</button>
       <button class="dismiss" id="installDismiss">✕</button>
     </div>
     <main id="mainContent">${bodyHtml}</main>
     <nav class="bottom-nav">
-      <button data-nav="#/" class="${route.name === 'home' ? 'active' : ''}"><span class="emoji">🏠</span>Home</button>
-      <button data-nav="#/category/emergency" class="${route.name === 'category' && route.params[0] === 'emergency' ? 'active' : ''}"><span class="emoji">🔴</span>Emergency</button>
-      <button data-nav="#/iwantto" class="${route.name === 'iwantto_list' || route.name === 'iwantto_detail' ? 'active' : ''}"><span class="emoji">💡</span>I Want To</button>
-      <button data-nav="#/az" class="${route.name === 'az' ? 'active' : ''}"><span class="emoji">🔍</span>Search</button>
+      <button data-nav="#/" class="${route.name === 'home' ? 'active' : ''}"><span class="emoji">🏠</span>${escapeHtml(tt("navHome"))}</button>
+      <button data-nav="#/category/emergency" class="${route.name === 'category' && route.params[0] === 'emergency' ? 'active' : ''}"><span class="emoji">🔴</span>${escapeHtml(tt("navEmergency"))}</button>
+      <button data-nav="#/iwantto" class="${route.name === 'iwantto_list' || route.name === 'iwantto_detail' ? 'active' : ''}"><span class="emoji">💡</span>${escapeHtml(tt("navIWantTo"))}</button>
+      <button data-nav="#/az" class="${route.name === 'az' ? 'active' : ''}"><span class="emoji">🔍</span>${escapeHtml(tt("navSearch"))}</button>
     </nav>
   `;
 
   bindNav();
   bindSearch();
   bindInstallBanner();
+  bindToggles();
   window.scrollTo(0, 0);
 }
 
@@ -325,7 +422,7 @@ function viewSearchPage(q) {
   return `
     <div class="search-wrap">
       <span class="icon">🔍</span>
-      <input id="searchInput" type="search" placeholder="Search a topic..." value="${escapeHtml(q)}" autocomplete="off">
+      <input id="searchInput" type="search" placeholder="${escapeHtml(tt("searchPlaceholderGeneric"))}" value="${escapeHtml(q)}" autocomplete="off">
     </div>
     <div id="searchResults">${viewSearch(q)}</div>
   `;
@@ -340,6 +437,17 @@ function bindNav() {
   });
   const backBtn = document.getElementById("backBtn");
   if (backBtn) backBtn.addEventListener("click", () => history.back());
+}
+
+function bindToggles() {
+  const langToggle = document.getElementById("langToggle");
+  if (langToggle) {
+    langToggle.querySelectorAll("button[data-lang]").forEach(btn => {
+      btn.addEventListener("click", () => setLang(btn.getAttribute("data-lang")));
+    });
+  }
+  const themeToggle = document.getElementById("themeToggle");
+  if (themeToggle) themeToggle.addEventListener("click", toggleTheme);
 }
 
 function bindSearch() {
@@ -364,13 +472,13 @@ function bindSearch() {
     iwtInput.addEventListener("input", () => {
       const rowList = document.querySelector(".row-list");
       const q = iwtInput.value.trim().toLowerCase();
-      const items = I_WANT_TO.filter(i => !q || i.label.toLowerCase().includes(q));
+      const items = I_WANT_TO.filter(i => !q || t(i.label).toLowerCase().includes(q));
       rowList.innerHTML = items.map(i => `
         <div class="row" data-nav="#/iwantto/${i.id}">
           <span class="emoji">${i.emoji}</span>
-          <span class="text">${escapeHtml(i.label)}</span>
+          <span class="text">${escapeHtml(t(i.label))}</span>
           <span class="chev">›</span>
-        </div>`).join("") || `<div class="empty-state">No matches. Try a different search term.</div>`;
+        </div>`).join("") || `<div class="empty-state">${escapeHtml(tt("noMatches"))}</div>`;
       bindNav();
     });
   }
@@ -410,13 +518,6 @@ function bindInstallBanner() {
     });
   }
 }
-
-/* ---------- Home search wiring (redirect to #/search) ---------- */
-document.addEventListener("input", (e) => {
-  if (e.target && e.target.id === "searchInput" && parseRoute().name === "home") {
-    // keep inline results on home page, no redirect needed
-  }
-});
 
 /* ---------- Init ---------- */
 window.addEventListener("hashchange", render);
