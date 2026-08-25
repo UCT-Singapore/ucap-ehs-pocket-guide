@@ -7,7 +7,9 @@
   --red-dark: #a8241d;
   --amber: #e08e00;
   --green: #2f8f4e;
-  --blue: #0b5fa5;
+  --blue: #0c3d72;
+  --blue-dark: #082a52;
+  --cyan: #12a0d6;
   --ink: #16181c;
   --ink-soft: #4a4f57;
   --bg: #f4f5f7;
@@ -35,7 +37,9 @@
     --red-dark: #c23830;
     --amber: #e6a83e;
     --green: #4caf72;
-    --blue: #5b9fdb;
+    --blue: #3f7fc4;
+    --blue-dark: #2c5e93;
+    --cyan: #3fb8e8;
     --ink: #eceef1;
     --ink-soft: #a7acb5;
     --bg: #121317;
@@ -59,7 +63,9 @@
   --red-dark: #c23830;
   --amber: #e6a83e;
   --green: #4caf72;
-  --blue: #5b9fdb;
+  --blue: #3f7fc4;
+  --blue-dark: #2c5e93;
+  --cyan: #3fb8e8;
   --ink: #eceef1;
   --ink-soft: #a7acb5;
   --bg: #121317;
@@ -82,7 +88,9 @@
   --red-dark: #a8241d;
   --amber: #e08e00;
   --green: #2f8f4e;
-  --blue: #0b5fa5;
+  --blue: #0c3d72;
+  --blue-dark: #082a52;
+  --cyan: #12a0d6;
   --ink: #16181c;
   --ink-soft: #4a4f57;
   --bg: #f4f5f7;
@@ -128,7 +136,7 @@ html, body {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--ink);
+  background: var(--blue);
   color: #fff;
   padding: calc(10px + var(--safe-top)) 14px 10px;
   display: flex;
@@ -183,7 +191,7 @@ main {
 
 /* ---------- Home hero ---------- */
 .hero {
-  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 60%, var(--cyan) 100%);
   color: #fff;
   border-radius: var(--radius);
   padding: 18px 16px;
@@ -494,7 +502,7 @@ main {
   font-weight: 600;
 }
 .bottom-nav button .emoji { font-size: 19px; }
-.bottom-nav button.active { color: var(--red); }
+.bottom-nav button.active { color: var(--blue); }
 
 /* ---------- Install banner ---------- */
 .install-banner {
