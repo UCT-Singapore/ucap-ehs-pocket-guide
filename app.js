@@ -55,6 +55,7 @@ const UI = {
   navIWantTo: { en: "I Want To", zh: "我要" },
   navSearch: { en: "Search", zh: "搜索" },
   installBannerText: { en: "📲 Add this guide to your home screen for one-tap access.", zh: "📲 将本指南添加到主屏幕，一键访问。" },
+  installBannerTextIOS: { en: "📲 Add this guide to your home screen: tap the Share button below, then \"Add to Home Screen\".", zh: "📲 将本指南添加到主屏幕：点击下方的分享按钮，然后选择「添加到主屏幕」。" },
   installBtn: { en: "Install", zh: "安装" },
   searchPlaceholderGeneric: { en: "Search a topic...", zh: "搜索主题..." },
   noResults: {
@@ -83,6 +84,20 @@ function toggleTheme() {
   render();
 }
 applyTheme(getStoredTheme());
+
+/* ---------- Install prompt platform detection ----------
+   iOS Safari has no beforeinstallprompt event — there is no
+   programmatic way to trigger the install there, so it needs its
+   own banner with manual "tap Share > Add to Home Screen" text.
+-------------------------------------------------------- */
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+function isStandalone() {
+  return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
+    || window.navigator.standalone === true;
+}
 
 /* ---------- Helpers ---------- */
 function topicById(id) {
@@ -398,8 +413,8 @@ function render() {
       ${tb.showBack ? `<button class="home-btn" data-nav="#/">⌂</button>` : `<span style="width:36px;"></span>`}
     </div>
     <div class="install-banner" id="installBanner">
-      <span>${escapeHtml(tt("installBannerText"))}</span>
-      <button id="installBtn">${escapeHtml(tt("installBtn"))}</button>
+      <span>${escapeHtml(isIOS() ? tt("installBannerTextIOS") : tt("installBannerText"))}</span>
+      ${isIOS() ? "" : `<button id="installBtn">${escapeHtml(tt("installBtn"))}</button>`}
       <button class="dismiss" id="installDismiss">✕</button>
     </div>
     <main id="mainContent">${bodyHtml}</main>
@@ -499,7 +514,9 @@ function bindInstallBanner() {
   const banner = document.getElementById("installBanner");
   const installBtn = document.getElementById("installBtn");
   const dismissBtn = document.getElementById("installDismiss");
-  if (deferredInstallPrompt && !localStorage.getItem("ehs_install_dismissed") && banner) {
+  const dismissed = localStorage.getItem("ehs_install_dismissed");
+  const showable = isIOS() ? !isStandalone() : !!deferredInstallPrompt;
+  if (banner && showable && !dismissed) {
     banner.classList.add("show");
   }
   if (installBtn) {
