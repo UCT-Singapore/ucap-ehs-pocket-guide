@@ -1354,6 +1354,7 @@ const UI = {
   installBannerText: { en: "📲 Add this guide to your home screen for one-tap access.", zh: "📲 将本指南添加到主屏幕，一键访问。" },
   installBannerTextIOS: { en: "📲 Add this guide to your home screen: tap the Share button below, then \"Add to Home Screen\".", zh: "📲 将本指南添加到主屏幕：点击下方的分享按钮，然后选择「添加到主屏幕」。" },
   installBtn: { en: "Install", zh: "安装" },
+  addToHomeScreen: { en: "Add to Home Screen", zh: "添加到主屏幕" },
   searchPlaceholderGeneric: { en: "Search a topic...", zh: "搜索主题..." },
   noResults: {
     en: (q) => `No results for "${q}". Try a shorter word, or contact EHS directly.`,
@@ -1459,6 +1460,7 @@ function viewHome() {
           <button data-lang="zh" class="${lang === "zh" ? "active" : ""}">中</button>
         </div>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">${theme === "dark" ? "☀️" : "🌙"}</button>
+        ${isStandalone() ? "" : `<button class="theme-toggle" id="installNowBtn" aria-label="${escapeHtml(tt("addToHomeScreen"))}">📲</button>`}
       </div>
     </div>
 
@@ -1760,6 +1762,20 @@ function bindToggles() {
   }
   const themeToggle = document.getElementById("themeToggle");
   if (themeToggle) themeToggle.addEventListener("click", toggleTheme);
+  const installNowBtn = document.getElementById("installNowBtn");
+  if (installNowBtn) {
+    installNowBtn.addEventListener("click", () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.finally(() => { deferredInstallPrompt = null; });
+        return;
+      }
+      // No native prompt available (iOS, or not yet offered by the browser) —
+      // re-show the instructional banner even if it was previously dismissed.
+      const banner = document.getElementById("installBanner");
+      if (banner) banner.classList.add("show");
+    });
+  }
 }
 
 function bindSearch() {
