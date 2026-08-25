@@ -1353,6 +1353,7 @@ const UI = {
   navSearch: { en: "Search", zh: "搜索" },
   installBannerText: { en: "📲 Add this guide to your home screen for one-tap access.", zh: "📲 将本指南添加到主屏幕，一键访问。" },
   installBannerTextIOS: { en: "📲 Add this guide to your home screen: tap the Share button below, then \"Add to Home Screen\".", zh: "📲 将本指南添加到主屏幕：点击下方的分享按钮，然后选择「添加到主屏幕」。" },
+  installBannerTextIOSNonSafari: { en: "📲 For the full app experience, open this page in Safari, then tap Share → \"Add to Home Screen\" (Chrome and other iOS browsers can't install it as an app).", zh: "📲 如需完整应用体验，请在Safari浏览器中打开此页面，然后点击「分享」→「添加到主屏幕」（Chrome及其他iOS浏览器无法将本指南安装为应用程序）。" },
   installBtn: { en: "Install", zh: "安装" },
   addToHomeScreen: { en: "Add to Home Screen", zh: "添加到主屏幕" },
   searchPlaceholderGeneric: { en: "Search a topic...", zh: "搜索主题..." },
@@ -1391,6 +1392,14 @@ applyTheme(getStoredTheme());
 function isIOS() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent)
     || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+// Chrome/Firefox/Edge on iOS are all WebKit under the hood and still contain
+// "Safari" in their UA string, so real Safari has to be identified by the
+// ABSENCE of those other browsers' own UA tokens. This matters because iOS
+// only allows a true standalone (full-screen, no browser chrome) home-screen
+// install from Safari itself — other iOS browsers can only add a bookmark.
+function isIOSSafari() {
+  return isIOS() && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS|mercury/i.test(navigator.userAgent);
 }
 function isStandalone() {
   return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
@@ -1712,7 +1721,11 @@ function render() {
       ${tb.showBack ? `<button class="home-btn" data-nav="#/">⌂</button>` : `<span style="width:36px;"></span>`}
     </div>
     <div class="install-banner" id="installBanner">
-      <span>${escapeHtml(isIOS() ? tt("installBannerTextIOS") : tt("installBannerText"))}</span>
+      <span>${escapeHtml(
+        !isIOS() ? tt("installBannerText") :
+        isIOSSafari() ? tt("installBannerTextIOS") :
+        tt("installBannerTextIOSNonSafari")
+      )}</span>
       ${isIOS() ? "" : `<button id="installBtn">${escapeHtml(tt("installBtn"))}</button>`}
       <button class="dismiss" id="installDismiss">✕</button>
     </div>
