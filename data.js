@@ -40,7 +40,7 @@ const CONTACTS = [
       { label: { en: "Management — TS Sum", zh: "管理层 — TS Sum" }, phone: "8112 3798", emoji: "👔" },
       { label: { en: "SIC — Chiang Sun Chen", zh: "现场主管 (SIC) — Chiang Sun Chen" }, phone: "9852 8011", emoji: "🧑‍💼" },
       { label: { en: "SIC — Ee Jern Liang", zh: "现场主管 (SIC) — Ee Jern Liang" }, phone: "8137 2836", emoji: "🧑‍💼" },
-      { label: { en: "EHS — Toh Ee Meng", zh: "EHS — Toh Ee Meng" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
+      { label: { en: "EHS — Toh Ee Meng", zh: "环境健康安全部 (EHS) — Toh Ee Meng" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
       { label: { en: "Facility — Wu Wenjian", zh: "设施部 — Wu Wenjian" }, phone: "8822 1930", emoji: "🏭" },
       { label: { en: "IT — Robin Johan", zh: "IT — Robin Johan" }, phone: "9125 9883", emoji: "💻" }
     ]

@@ -71,13 +71,10 @@ function getStoredTheme() {
   return localStorage.getItem("ehs_theme"); // "light" | "dark" | null (follow system)
 }
 function applyTheme(theme) {
-  if (theme) document.documentElement.setAttribute("data-theme", theme);
-  else document.documentElement.removeAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme", theme || "light");
 }
 function currentEffectiveTheme() {
-  const stored = getStoredTheme();
-  if (stored) return stored;
-  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return getStoredTheme() || "light";
 }
 function toggleTheme() {
   const next = currentEffectiveTheme() === "dark" ? "light" : "dark";
