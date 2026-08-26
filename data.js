@@ -60,7 +60,8 @@ const CATEGORIES = [
   { id: "electrical",  emoji: "⚡", label: { en: "Electrical Safety", zh: "电气安全" } },
   { id: "contractor",  emoji: "👷", label: { en: "Contractor Work", zh: "承包商作业" } },
   { id: "injury",      emoji: "🩹", label: { en: "Injury / First Aid", zh: "受伤/急救" } },
-  { id: "environment", emoji: "🌱", label: { en: "Environmental & Sustainability", zh: "环境与可持续发展" } }
+  { id: "environment", emoji: "🌱", label: { en: "Environmental & Sustainability", zh: "环境与可持续发展" } },
+  { id: "siterules", emoji: "🚭", label: { en: "Site Rules", zh: "场地规定" } }
 ];
 
 /* ---------- TOPIC GUIDES ----------
@@ -512,6 +513,24 @@ const TOPICS = [
       { title: { en: "SEGREGATE", zh: "分类" }, text: { en: "Sort waste correctly so recyclables don't end up in landfill.", zh: "正确分类废物，避免可回收物被填埋。" } }
     ],
     links: [ { emoji: "📞", label: { en: "Contact EHS", zh: "联系EHS" }, action: "contacts" } ]
+  },
+
+  // ===== SITE RULES =====
+  {
+    id: "smoking-policy", category: "siterules", emoji: "🚭",
+    badge: { en: "Site Rules", zh: "场地规定" },
+    title: { en: "Smoking & Vaping Policy", zh: "吸烟与电子烟政策" },
+    steps: [
+      { title: { en: "DESIGNATED AREAS ONLY", zh: "仅限指定区域" }, text: { en: "Smoking and vaping (including e-cigarettes) are only allowed at the designated smoking areas shown on the site map — never inside any building or work area.", zh: "吸烟和使用电子烟仅限于场地地图上标示的指定吸烟区——严禁在任何建筑物或工作区域内进行。" } },
+      { title: { en: "STAY 5 METRES CLEAR", zh: "远离入口5米" }, text: { en: "Stay at least 5 metres away from any building entrance while smoking, and do not stand adjacent to entrances.", zh: "吸烟时须至少远离建筑物入口5米，不得在入口附近逗留。" } },
+      { title: { en: "KEEP SMOKE OUT", zh: "防止烟雾进入建筑物" }, text: { en: "You're responsible for making sure smoke does not drift into UCAP buildings.", zh: "您有责任确保烟雾不会飘入UCAP建筑物内。" } }
+    ],
+    danger: { en: "Smoking within 5m of a building entrance is a Level 2 disciplinary offence (written warning, suspension or termination). Smoking anywhere else on company premises, or vaping in/out of company premises, is a Level 3 offence — grounds for immediate termination.", zh: "在建筑物入口5米范围内吸烟属于二级违规行为（书面警告、停职或解雇）。在公司范围内其他区域吸烟，或在公司内外使用电子烟，均属于三级违规行为——可导致立即解雇。" },
+    links: [
+      { emoji: "🗺️", label: { en: "Smoking Area Map", zh: "吸烟区地图" }, action: "custom:./docs/smoking-area-map.jpg" },
+      { emoji: "📖", label: { en: "Code of Conduct Excerpt", zh: "行为准则节录" }, action: "custom:./docs/Smoking_Policy_and_Disciplinary_Action_Excerpt.pdf" },
+      { emoji: "📞", label: { en: "Contact EHS", zh: "联系EHS" }, action: "contacts" }
+    ]
   }
 ];
 
