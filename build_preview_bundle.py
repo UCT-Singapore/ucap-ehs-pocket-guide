@@ -33,6 +33,8 @@ def main():
     sds_uri = b64_uri("sds/IPA_SDS.pdf", "application/pdf")
     smoking_map_uri = b64_uri("docs/smoking-area-map.jpg", "image/jpeg")
     conduct_excerpt_uri = b64_uri("docs/Smoking_Policy_and_Disciplinary_Action_Excerpt.pdf", "application/pdf")
+    ucap_assembly_uri = b64_uri("docs/UCAP_Assembly_Area.pdf", "application/pdf")
+    admirax_assembly_uri = b64_uri("docs/Admirax_Assembly_Area.pdf", "application/pdf")
 
     styles = read("styles.css")
 
@@ -40,6 +42,8 @@ def main():
     data_js = data_js.replace('"./sds/IPA_SDS.pdf"', f'"{sds_uri}"')
     data_js = data_js.replace("./docs/smoking-area-map.jpg", smoking_map_uri)
     data_js = data_js.replace("./docs/Smoking_Policy_and_Disciplinary_Action_Excerpt.pdf", conduct_excerpt_uri)
+    data_js = data_js.replace("./docs/UCAP_Assembly_Area.pdf", ucap_assembly_uri)
+    data_js = data_js.replace("./docs/Admirax_Assembly_Area.pdf", admirax_assembly_uri)
 
     app_js = read("app.js")
     app_js = app_js.replace('"./brand/uct-logo.png"', f'"{logo_uri}"')

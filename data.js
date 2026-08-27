@@ -87,7 +87,8 @@ const TOPICS = [
     danger: { en: "If you see fire or smoke and it is safe to raise the alarm, activate the nearest fire alarm call point and shout to alert others.", zh: "如果看到火情或烟雾，且在安全的情况下，请启动最近的火警报警点并大声提醒他人。" },
     links: [
       { emoji: "📞", label: { en: "Emergency Contacts", zh: "紧急联系方式" }, action: "contacts" },
-      { emoji: "📍", label: { en: "Assembly Points", zh: "集合点" }, action: "procedure" },
+      { emoji: "📍", label: { en: "Assembly Points — UCAP (Product)", zh: "集合点 — UCAP（生产部门）" }, action: "custom:./docs/UCAP_Assembly_Area.pdf" },
+      { emoji: "📍", label: { en: "Assembly Points — Admirax (Services)", zh: "集合点 — Admirax（服务部门）" }, action: "custom:./docs/Admirax_Assembly_Area.pdf" },
       { emoji: "📋", label: { en: "Full Emergency Procedure", zh: "完整应急程序" }, action: "procedure" }
     ]
   },
