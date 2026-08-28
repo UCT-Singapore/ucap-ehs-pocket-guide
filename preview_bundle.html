@@ -646,13 +646,11 @@ const CONTACTS = [
   {
     group: { en: "Site Contacts", zh: "现场联系人" },
     items: [
-      { label: { en: "Management — Vincent Lim", zh: "管理层 — Vincent Lim" }, phone: "9623 8918", emoji: "👔" },
-      { label: { en: "Management — TS Sum", zh: "管理层 — TS Sum" }, phone: "8112 3798", emoji: "👔" },
-      { label: { en: "SIC — Chiang Sun Chen", zh: "现场主管 (SIC) — Chiang Sun Chen" }, phone: "9852 8011", emoji: "🧑‍💼" },
-      { label: { en: "SIC — Ee Jern Liang", zh: "现场主管 (SIC) — Ee Jern Liang" }, phone: "8137 2836", emoji: "🧑‍💼" },
-      { label: { en: "EHS — Toh Ee Meng", zh: "环境健康安全部 (EHS) — Toh Ee Meng" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
-      { label: { en: "Facility — Wu Wenjian", zh: "设施部 — Wu Wenjian" }, phone: "8822 1930", emoji: "🏭" },
-      { label: { en: "IT — Robin Johan", zh: "IT — Robin Johan" }, phone: "9125 9883", emoji: "💻" }
+      { label: { en: "Management", zh: "管理层" }, phone: "9623 8918", emoji: "👔" },
+      { label: { en: "CERT SIC", zh: "CERT 现场主管 (SIC)" }, phone: "9852 8011", emoji: "🧑‍💼" },
+      { label: { en: "EHS", zh: "环境健康安全部 (EHS)" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
+      { label: { en: "Facility", zh: "设施部" }, phone: "8822 1930", emoji: "🏭" },
+      { label: { en: "IT", zh: "IT" }, phone: "9125 9883", emoji: "💻" }
     ]
   }
 ];
@@ -1358,6 +1356,7 @@ const UI = {
   iWantToSearchPlaceholder: { en: "Search an action...", zh: "搜索操作..." },
   noMatches: { en: "No matches. Try a different search term.", zh: "未找到匹配项。请尝试其他搜索词。" },
   emergencyContactsHeading: { en: "📞 Emergency Contacts", zh: "📞 紧急联系方式" },
+  internalContactOnly: { en: "Contact via internal directory", zh: "请通过内部通讯录联系" },
   quickGuides: { en: "Quick Guides", zh: "快速指南" },
   allTopicsHeading: { en: "🔍 All Topics", zh: "🔍 所有主题" },
   pageNotFound: { en: "Page not found.", zh: "页面未找到。" },
@@ -1611,12 +1610,17 @@ function viewContacts() {
   const groups = CONTACTS.map(g => `
     <div class="section-label">${escapeHtml(t(g.group))}</div>
     <div class="row-list">
-      ${g.items.map(c => `
+      ${g.items.map(c => c.phone ? `
         <a class="row plain" href="tel:${c.phone.replace(/[^\d+]/g, '')}">
           <span class="emoji">${c.emoji}</span>
           <span class="text">${escapeHtml(t(c.label))}<small>${escapeHtml(c.phone)}</small></span>
           <span class="chev">📞</span>
-        </a>`).join("")}
+        </a>` : `
+        <div class="row">
+          <span class="emoji">${c.emoji}</span>
+          <span class="text">${escapeHtml(t(c.label))}<small>${escapeHtml(tt("internalContactOnly"))}</small></span>
+          <span class="chev">🔒</span>
+        </div>`).join("")}
     </div>`).join("");
 
   return `

@@ -41,6 +41,7 @@ const UI = {
   iWantToSearchPlaceholder: { en: "Search an action...", zh: "搜索操作..." },
   noMatches: { en: "No matches. Try a different search term.", zh: "未找到匹配项。请尝试其他搜索词。" },
   emergencyContactsHeading: { en: "📞 Emergency Contacts", zh: "📞 紧急联系方式" },
+  internalContactOnly: { en: "Contact via internal directory", zh: "请通过内部通讯录联系" },
   quickGuides: { en: "Quick Guides", zh: "快速指南" },
   allTopicsHeading: { en: "🔍 All Topics", zh: "🔍 所有主题" },
   pageNotFound: { en: "Page not found.", zh: "页面未找到。" },
@@ -294,12 +295,17 @@ function viewContacts() {
   const groups = CONTACTS.map(g => `
     <div class="section-label">${escapeHtml(t(g.group))}</div>
     <div class="row-list">
-      ${g.items.map(c => `
+      ${g.items.map(c => c.phone ? `
         <a class="row plain" href="tel:${c.phone.replace(/[^\d+]/g, '')}">
           <span class="emoji">${c.emoji}</span>
           <span class="text">${escapeHtml(t(c.label))}<small>${escapeHtml(c.phone)}</small></span>
           <span class="chev">📞</span>
-        </a>`).join("")}
+        </a>` : `
+        <div class="row">
+          <span class="emoji">${c.emoji}</span>
+          <span class="text">${escapeHtml(t(c.label))}<small>${escapeHtml(tt("internalContactOnly"))}</small></span>
+          <span class="chev">🔒</span>
+        </div>`).join("")}
     </div>`).join("");
 
   return `
