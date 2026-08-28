@@ -37,7 +37,7 @@ const CONTACTS = [
     group: { en: "Site Contacts", zh: "现场联系人" },
     items: [
       { label: { en: "Management", zh: "管理层" }, phone: "9623 8918", emoji: "👔" },
-      { label: { en: "SIC", zh: "现场主管 (SIC)" }, phone: "9852 8011", emoji: "🧑‍💼" },
+      { label: { en: "CERT SIC", zh: "CERT 现场主管 (SIC)" }, phone: "9852 8011", emoji: "🧑‍💼" },
       { label: { en: "EHS", zh: "环境健康安全部 (EHS)" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
       { label: { en: "Facility", zh: "设施部" }, phone: "8822 1930", emoji: "🏭" },
       { label: { en: "IT", zh: "IT" }, phone: "9125 9883", emoji: "💻" }
