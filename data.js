@@ -36,13 +36,11 @@ const CONTACTS = [
   {
     group: { en: "Site Contacts", zh: "现场联系人" },
     items: [
-      { label: { en: "Management — Vincent Lim", zh: "管理层 — Vincent Lim" }, phone: "9623 8918", emoji: "👔" },
-      { label: { en: "Management — TS Sum", zh: "管理层 — TS Sum" }, phone: null, emoji: "👔" },
-      { label: { en: "SIC — Chiang Sun Chen", zh: "现场主管 (SIC) — Chiang Sun Chen" }, phone: "9852 8011", emoji: "🧑‍💼" },
-      { label: { en: "SIC — Ee Jern Liang", zh: "现场主管 (SIC) — Ee Jern Liang" }, phone: "8137 2836", emoji: "🧑‍💼" },
-      { label: { en: "EHS — Toh Ee Meng", zh: "环境健康安全部 (EHS) — Toh Ee Meng" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
-      { label: { en: "Facility — Wu Wenjian", zh: "设施部 — Wu Wenjian" }, phone: "8822 1930", emoji: "🏭" },
-      { label: { en: "IT — Robin Johan", zh: "IT — Robin Johan" }, phone: "9125 9883", emoji: "💻" }
+      { label: { en: "Management", zh: "管理层" }, phone: "9623 8918", emoji: "👔" },
+      { label: { en: "SIC", zh: "现场主管 (SIC)" }, phone: "9852 8011", emoji: "🧑‍💼" },
+      { label: { en: "EHS", zh: "环境健康安全部 (EHS)" }, phone: "9678 5585", emoji: "🧑‍⚕️" },
+      { label: { en: "Facility", zh: "设施部" }, phone: "8822 1930", emoji: "🏭" },
+      { label: { en: "IT", zh: "IT" }, phone: "9125 9883", emoji: "💻" }
     ]
   }
 ];
